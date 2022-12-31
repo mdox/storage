@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Storage</title>
+    <style>
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        max-width: 768px;
+      }
+
+      textarea {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <form onsubmit="handleUpload(event)">
+      <input type="file" name="file" multiple />
+      <button type="submit">Submit</button>
+    </form>
+
+    <hr />
+
+    <form onsubmit="handleDelete(event)">
+      <textarea name="text"></textarea>
+      <button type="submit">Submit</button>
+    </form>
+
+    <script>
+      const collection = "test";
+      const api = "http://localhost:8000";
+
+      async function handleUpload(e) {
+        e.preventDefault();
+
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+
+        const response = await fetch(`${api}/upload/${collection}`, {
+          method: "POST",
+          body: formData,
+        });
+
+        console.log(await response.json());
+      }
+
+      async function handleDelete(e) {
+        e.preventDefault();
+
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+
+        const items = formData
+          .get("text")
+          .split(/\n+/)
+          .map((line) => line.trim().split("/"));
+
+        const response = await fetch(`${api}/delete/${collection}`, {
+          method: "POST",
+          body: JSON.stringify(items),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        console.log(await response.json());
+      }
+    </script>
+  </body>
+</html>
