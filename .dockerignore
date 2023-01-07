@@ -3,3 +3,4 @@ pnpm-lock.yaml
 .vscode
 node_modules
 .env
+.git
